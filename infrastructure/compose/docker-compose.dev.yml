@@ -8,7 +8,7 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
     ports:
-      - "${POSTGRES_PORT:-5432}:5432"
+      - "${POSTGRES_PORT:-5434}:5432"
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
       interval: 5s
@@ -17,6 +17,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ../docker/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - /etc/localtime:/etc/localtime:ro
 
   wallet-java:
     build:
@@ -33,10 +34,11 @@ services:
       - SERVER_PORT=${WALLET_SERVER_PORT}
       - SPRING_PROFILES_ACTIVE=dev
     ports:
-      - "${WALLET_SERVER_PORT:-8081}:${WALLET_SERVER_PORT:-8081}"
+      - "${WALLET_SERVER_PORT:-8202}:${WALLET_SERVER_PORT:-8081}"
     volumes:
       - ../../services/wallet-java:/app
       - maven_cache:/root/.m2
+      - /etc/localtime:/etc/localtime:ro
 
   sqlserver:
     image: mcr.microsoft.com/mssql/server:2022-latest
@@ -48,13 +50,15 @@ services:
       - MSSQL_SA_PASSWORD=${SQLSERVER_PASSWORD}
       - MSSQL_PID=Developer
     ports:
-      - "${SQLSERVER_PORT:-1433}:1433"
+      - "${SQLSERVER_PORT:-1435}:1433"
     healthcheck:
       test: ["CMD", "/opt/mssql-tools18/bin/sqlcmd", "-S", "localhost", "-U", "sa", "-P", "${SQLSERVER_PASSWORD}", "-C", "-Q", "SELECT 1"]
       interval: 10s
       timeout: 10s
       retries: 20
       start_period: 30s
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
 
   orders-csharp:
     build:
@@ -71,11 +75,11 @@ services:
       - ConnectionStrings__DefaultConnection=${ORDERS_DB_CONNECTION_STRING}
       - DOTNET_USE_POLLING_FILE_WATCHER=1
     ports:
-      - "${ORDERS_SERVER_PORT:-5001}:80"
+      - "${ORDERS_SERVER_PORT:-5200}:80"
     volumes:
       - ../../services/order-engine-csharp:/src
       - nuget_cache:/root/.nuget/packages
-
+      - /etc/localtime:/etc/localtime:ro
 
   mongodb:
     image: mongo:7.0
@@ -86,7 +90,7 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD}
       MONGO_INITDB_DATABASE: ${MONGO_DB}
     ports:
-      - "${MONGO_PORT:-27017}:27017"
+      - "${MONGO_PORT:-27019}:27017"
     healthcheck:
       test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
       interval: 10s
@@ -94,6 +98,7 @@ services:
       retries: 5
     volumes:
       - mongodb_data:/data/db
+      - /etc/localtime:/etc/localtime:ro
 
   analytics-python:
     build:
@@ -110,9 +115,10 @@ services:
       - MONGO_URL=${ANALYTICS_MONGO_URL}
       - DB_NAME=${MONGO_DB}
     ports:
-      - "${ANALYTICS_SERVER_PORT:-8003}:8003"
+      - "${ANALYTICS_SERVER_PORT:-8204}:8003"
     volumes:
       - ../../services/analytics-python:/app
+      - /etc/localtime:/etc/localtime:ro
 
   rabbitmq:
     image: rabbitmq:3-management
@@ -122,8 +128,8 @@ services:
       RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
       RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASS}
     ports:
-      - "${RABBITMQ_PORT:-5672}:5672"
-      - "${RABBITMQ_MGMT_PORT:-15672}:15672"
+      - "${RABBITMQ_PORT:-5674}:5672"
+      - "${RABBITMQ_MGMT_PORT:-15674}:15672"
     healthcheck:
       test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
       interval: 10s
@@ -131,6 +137,7 @@ services:
       retries: 5
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
+      - /etc/localtime:/etc/localtime:ro
 
   notifier-node:
     build:
@@ -151,33 +158,31 @@ services:
       - RABBITMQ_PASS=${RABBITMQ_PASS}
       - RABBITMQ_HOST=rabbitmq
       - RABBITMQ_PORT=5672
-
     ports:
-      - "${NOTIFIER_PORT:-8084}:8084"
+      - "${NOTIFIER_PORT:-8203}:8084"
     volumes:
       - ../../services/notifier-node:/app
       - /app/node_modules
+      - /etc/localtime:/etc/localtime:ro
 
   pricing-go:
     build:
       context: ../../services/pricing-go
-      target: builder # Use builder stage for dev to have go tools if needed, or stick to a dev stage if I define one. ideally for dev use 'air' but for now simple go run is fine or the binary. 
-      # Actually, let's use a dev target or just the base image for hot reload if requested later.
-      # For now, sticking to the requested simple execution.
+      target: builder 
     container_name: nexus-pricing-go-dev
-    # Overriding command for development to run from source
     image: golang:1.24-alpine
     working_dir: /app
     volumes:
       - ../../services/pricing-go:/app
       - go_pkg_cache:/go/pkg
+      - /etc/localtime:/etc/localtime:ro
     command: go run ./cmd/api
     environment:
       - SERVER_PORT=${PRICING_PORT}
       - REDIS_ADDR=redis:6379
       - RABBITMQ_URL=amqp://${RABBITMQ_USER}:${RABBITMQ_PASS}@rabbitmq:5672
     ports:
-      - "${PRICING_PORT:-8080}:8080"
+      - "${PRICING_PORT:-8201}:8080"
     depends_on:
       rabbitmq:
         condition: service_healthy
@@ -189,7 +194,7 @@ services:
     container_name: nexus-redis-dev
     restart: always
     ports:
-      - "6379:6379"
+      - "6381:6379"
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 10s
@@ -197,22 +202,24 @@ services:
       retries: 5
     volumes:
       - redis_data:/data
+      - /etc/localtime:/etc/localtime:ro
 
   gateway:
     image: nginx:alpine
-    container_name: nexus-trade
+    container_name: nexus-trade-dev
     restart: always
     ports:
-      - "80:80"
+      - "8200:80"
     volumes:
       - ../docker/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - /etc/localtime:/etc/localtime:ro
     depends_on:
       - pricing-go
       - wallet-java
       - orders-csharp
       - analytics-python
       - notifier-node
-
+      - web
 
   web:
     build:
@@ -223,14 +230,15 @@ services:
     command: ["npm", "run", "dev"]
     working_dir: /app
     environment:
-      - NEXT_PUBLIC_API_URL=http://localhost
+      - NEXT_PUBLIC_API_URL=http://localhost:8200
       - WATCHPACK_POLLING=true
     ports:
-      - "${WEB_PORT:-3000}:3000"
+      - "${WEB_PORT:-3200}:3000"
     volumes:
       - ../../web:/app
       - /app/node_modules
       - /app/.next
+      - /etc/localtime:/etc/localtime:ro
     depends_on:
       - wallet-java
       - orders-csharp
@@ -246,4 +254,3 @@ volumes:
   rabbitmq_data:
   redis_data:
   go_pkg_cache:
-

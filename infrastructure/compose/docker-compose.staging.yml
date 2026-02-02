@@ -25,6 +25,9 @@ services:
     build:
       context: ../../services/wallet-java
       target: prod
+      platforms:
+        - linux/amd64
+        - linux/arm64
     container_name: nexus-wallet-java-staging
     restart: always
     depends_on:
@@ -37,7 +40,7 @@ services:
       - SERVER_PORT=${WALLET_SERVER_PORT}
       - SPRING_PROFILES_ACTIVE=prod
     ports:
-      - "${WALLET_SERVER_PORT:-8082}:8081"
+      - "${WALLET_SERVER_PORT:-8102}:8081"
 
   sqlserver:
     image: mcr.microsoft.com/mssql/server:2022-latest
@@ -65,6 +68,9 @@ services:
     build:
       context: ../../services/order-engine-csharp
       target: final
+      platforms:
+        - linux/amd64
+        - linux/arm64
     container_name: nexus-orders-csharp-staging
     restart: always
     depends_on:
@@ -75,7 +81,7 @@ services:
       - ASPNETCORE_URLS=http://+:80
       - ConnectionStrings__DefaultConnection=${ORDERS_DB_CONNECTION_STRING}
     ports:
-      - "${ORDERS_SERVER_PORT:-5002}:80"
+      - "${ORDERS_SERVER_PORT:-5100}:80"
 
   mongodb:
     image: mongo:7.0
@@ -100,6 +106,9 @@ services:
     build:
       context: ../../services/analytics-python
       target: prod
+      platforms:
+        - linux/amd64
+        - linux/arm64
     container_name: nexus-analytics-python-staging
     restart: always
     depends_on:
@@ -110,7 +119,7 @@ services:
       - MONGO_URL=mongodb://${MONGO_ROOT_USER}:${MONGO_ROOT_PASSWORD}@mongodb:27017/${MONGO_DB}?authSource=admin
       - DB_NAME=${MONGO_DB}
     ports:
-      - "${ANALYTICS_SERVER_PORT:-8004}:8003"
+      - "${ANALYTICS_SERVER_PORT:-8104}:8003"
 
   rabbitmq:
     image: rabbitmq:3-management
@@ -135,6 +144,9 @@ services:
     build:
       context: ../../services/notifier-node
       target: prod
+      platforms:
+        - linux/amd64
+        - linux/arm64
     container_name: nexus-notifier-node-staging
     restart: always
     depends_on:
@@ -150,13 +162,15 @@ services:
       - RABBITMQ_HOST=rabbitmq
       - RABBITMQ_PORT=5672
     ports:
-      - "${NOTIFIER_PORT:-8085}:8084"
+      - "${NOTIFIER_PORT:-8103}:8084"
 
   pricing-go:
     image: ghcr.io/${GITHUB_REPOSITORY_OWNER:-alejandroastudillo}/nexus-trade-pricing:staging
     build:
       context: ../../services/pricing-go
-      # No target needed for distroless final stage
+      platforms:
+        - linux/amd64
+        - linux/arm64
     container_name: nexus-pricing-go-staging
     restart: always
     environment:
@@ -164,7 +178,7 @@ services:
       - REDIS_ADDR=redis:6379
       - RABBITMQ_URL=amqp://${RABBITMQ_USER}:${RABBITMQ_PASS}@rabbitmq:5672
     ports:
-      - "${PRICING_PORT:-8083}:8080"
+      - "${PRICING_PORT:-8101}:8080"
     depends_on:
       rabbitmq:
         condition: service_healthy
@@ -190,7 +204,7 @@ services:
     container_name: nexus-trade-staging
     restart: always
     ports:
-      - "8080:80"
+      - "8100:80"
     volumes:
       - ../docker/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
     depends_on:
@@ -206,12 +220,15 @@ services:
     build:
       context: ../../web
       target: prod
+      platforms:
+        - linux/amd64
+        - linux/arm64
     container_name: nexus-web-staging
     restart: always
     environment:
-      - NEXT_PUBLIC_API_URL=http://localhost:8080
+      - NEXT_PUBLIC_API_URL=http://localhost:8100
     ports:
-      - "${WEB_PORT:-3001}:3000"
+      - "${WEB_PORT:-3100}:3000"
     depends_on:
       - wallet-java
       - orders-csharp

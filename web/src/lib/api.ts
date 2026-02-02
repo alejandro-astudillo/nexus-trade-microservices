@@ -9,7 +9,7 @@ import { ApiError } from '@/types/api';
  * - RFC 7807 error handling
  */
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || '';
 
 // Token storage key
 const TOKEN_KEY = 'nexus_token';
