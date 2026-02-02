@@ -1,5 +1,5 @@
 # 1. Base Stage
-FROM node:20-alpine AS base
+FROM node:20-slim AS base
 WORKDIR /app
 RUN npm i -g npm@latest
 
