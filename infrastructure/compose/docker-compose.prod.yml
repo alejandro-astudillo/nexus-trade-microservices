@@ -107,7 +107,7 @@ services:
         condition: service_healthy
     environment:
       - SERVER_PORT=${ANALYTICS_SERVER_PORT}
-      - MONGO_URL=${ANALYTICS_MONGO_URL}
+      - MONGO_URL=mongodb://${MONGO_ROOT_USER}:${MONGO_ROOT_PASSWORD}@mongodb:27017/${MONGO_DB}?authSource=admin
       - DB_NAME=${MONGO_DB}
     ports:
       - "${ANALYTICS_SERVER_PORT:-8003}:8003"
@@ -144,7 +144,7 @@ services:
         condition: service_healthy
     environment:
       - PORT=${NOTIFIER_PORT}
-      - MONGO_URL=${NOTIFIER_MONGO_URL}
+      - MONGO_URL=mongodb://${MONGO_ROOT_USER}:${MONGO_ROOT_PASSWORD}@mongodb:27017/${MONGO_DB}?authSource=admin
       - RABBITMQ_USER=${RABBITMQ_USER}
       - RABBITMQ_PASS=${RABBITMQ_PASS}
       - RABBITMQ_HOST=rabbitmq
