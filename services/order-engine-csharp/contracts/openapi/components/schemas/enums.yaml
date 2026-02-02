@@ -1,0 +1,23 @@
+# services/order-engine-csharp/docs/openapi/components/schemas/enums.yaml
+OrderSide:
+  type: string
+  enum:
+    - BUY
+    - SELL
+  description: Direction of the trade.
+
+OrderType:
+  type: string
+  enum:
+    - MARKET
+    - LIMIT
+  description: Market executes immediately at best price; Limit executes at specific price.
+
+OrderStatus:
+  type: string
+  enum:
+    - PENDING
+    - FILLED
+    - REJECTED
+    - CANCELLED
+  description: Lifecycle state of the order.

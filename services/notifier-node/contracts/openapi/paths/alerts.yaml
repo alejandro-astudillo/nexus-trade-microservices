@@ -1,0 +1,58 @@
+# services/notifier-node/contracts/openapi/paths/alerts.yaml
+alerts:
+  get:
+    tags:
+      - Alerts
+    summary: Get Active Price Alerts
+    parameters:
+      - name: userId
+        in: query
+        required: true
+        schema:
+          type: string
+    responses:
+      '200':
+        description: List of user configured alerts.
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '../components/schemas/alert.yaml#/PriceAlert'
+  
+  post:
+    tags:
+      - Alerts
+    summary: Create Price Alert
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/alert.yaml#/CreateAlertRequest'
+    responses:
+      '201':
+        description: Alert created.
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas/alert.yaml#/PriceAlert'
+      '400':
+        $ref: '../components/responses/errors.yaml#/BadRequest'
+
+alertById:
+  delete:
+    tags:
+      - Alerts
+    summary: Delete Price Alert
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    responses:
+      '204':
+        description: Alert deleted successfully.
+      '404':
+        $ref: '../components/responses/errors.yaml#/NotFound'

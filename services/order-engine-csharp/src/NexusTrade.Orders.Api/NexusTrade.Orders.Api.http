@@ -1,0 +1,6 @@
+@NexusTrade.Orders.Api_HostAddress = http://localhost:5195
+
+GET {{NexusTrade.Orders.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

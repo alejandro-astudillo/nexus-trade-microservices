@@ -1,0 +1,108 @@
+# services/wallet-java/docs/openapi/paths/wallets.yaml
+myWallet:
+  get:
+    tags:
+      - Wallet
+    summary: Obtener saldo actual
+    description: Retorna el estado de la billetera del usuario autenticado.
+    responses:
+      '200':
+        description: Detalles de la billetera.
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas/wallet.yaml#/WalletDetail'
+      '401':
+        $ref: '../components/responses/errors.yaml#/Unauthorized'
+
+transactions:
+  get:
+    tags:
+      - Wallet
+    summary: Historial de transacciones
+    parameters:
+      - name: page
+        in: query
+        schema:
+          type: integer
+          default: 0
+      - name: size
+        in: query
+        schema:
+          type: integer
+          default: 20
+    responses:
+      '200':
+        description: Lista paginada de movimientos.
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '../components/schemas/transaction.yaml#/Transaction'
+
+deposit:
+  post:
+    tags:
+      - Wallet
+    summary: Depositar fondos (Simulación)
+    description: Endpoint para recargar saldo ficticio ("Paper Trading").
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/transaction.yaml#/DepositRequest'
+    responses:
+      '200':
+        description: Depósito exitoso. Retorna nuevo saldo.
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas/wallet.yaml#/WalletDetail'
+      '400':
+        $ref: '../components/responses/errors.yaml#/BadRequest'
+
+internalWithdraw:
+  post:
+    tags:
+      - Wallet
+    summary: Internal Withdraw (Service-to-Service)
+    description: Deduct funds from user wallet (e.g. for Order Execution).
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/transaction.yaml#/InternalTransactionRequest'
+    responses:
+      '200':
+        description: Withdrawal successful. Returns updated wallet.
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas/wallet.yaml#/WalletDetail'
+      '404':
+        $ref: '../components/responses/errors.yaml#/NotFound'
+
+internalDeposit:
+  post:
+    tags:
+      - Wallet
+    summary: Internal Deposit (Service-to-Service)
+    description: Add funds to user wallet.
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/transaction.yaml#/InternalTransactionRequest'
+    responses:
+      '200':
+        description: Deposit successful. Returns updated wallet.
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas/wallet.yaml#/WalletDetail'
+      '404':
+        $ref: '../components/responses/errors.yaml#/NotFound'

@@ -1,0 +1,48 @@
+# services/wallet-java/docs/openapi/index.yaml
+openapi: 3.0.3
+info:
+  title: NexusTrade Wallet & Auth Service
+  description: |
+    Microservicio responsable de la gestión de identidades (IAM) y la contabilidad (Ledger) de las billeteras de los usuarios.
+    Implementado en Java (Spring Boot) con PostgreSQL.
+  version: 1.0.0
+
+servers:
+  - url: http://localhost/api/wallet/v1
+    description: Servidor de Desarrollo (Vía NGINX Gateway)
+  - url: https://api.nexustrade.com/v1
+    description: Producción (Vía NGINX Gateway)
+
+# Definición de Seguridad Global
+security:
+  - BearerAuth: []
+
+paths:
+  # Autenticación (Público)
+  /auth/register:
+    $ref: './paths/auth.yaml#/register'
+  /auth/login:
+    $ref: './paths/auth.yaml#/login'
+  
+  # Usuarios
+  /users/me:
+    $ref: './paths/users.yaml#/me'
+
+  # Billetera y Transacciones
+  /wallets/me:
+    $ref: './paths/wallets.yaml#/myWallet'
+  /wallets/me/transactions:
+    $ref: './paths/wallets.yaml#/transactions'
+  /wallets/me/deposit:
+    $ref: './paths/wallets.yaml#/deposit'
+  /wallets/internal/withdraw:
+    $ref: './paths/wallets.yaml#/internalWithdraw'
+  /wallets/internal/deposit:
+    $ref: './paths/wallets.yaml#/internalDeposit'
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

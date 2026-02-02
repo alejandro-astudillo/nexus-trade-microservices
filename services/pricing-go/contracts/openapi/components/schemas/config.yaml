@@ -1,0 +1,20 @@
+AssetConfig:
+  type: object
+  required:
+    - symbol
+    - provider
+  properties:
+    symbol:
+      type: string
+      description: Internal symbol format.
+      example: "ETH-USD"
+    provider:
+      type: string
+      enum: [BINANCE, COINBASE, FINNHUB]
+    providerSymbol:
+      type: string
+      description: The symbol used by the external provider (e.g., btcusdt).
+      example: "ethusdt"
+    enabled:
+      type: boolean
+      default: true

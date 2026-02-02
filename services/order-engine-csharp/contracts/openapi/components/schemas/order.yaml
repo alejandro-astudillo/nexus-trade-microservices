@@ -1,0 +1,83 @@
+# services/order-engine-csharp/docs/openapi/components/schemas/order.yaml
+CreateOrderRequest:
+  type: object
+  required:
+    - symbol
+    - side
+    - type
+    - quantity
+  properties:
+    symbol:
+      type: string
+      example: "BTC-USD"
+      minLength: 3
+      maxLength: 10
+    side:
+      $ref: './enums.yaml#/OrderSide'
+    type:
+      $ref: './enums.yaml#/OrderType'
+    quantity:
+      type: number
+      format: double
+      minimum: 0.000001
+      description: Amount of asset to buy/sell.
+      example: 0.5
+    price:
+      type: number
+      format: double
+      minimum: 0.01
+      nullable: true
+      description: Required if type is LIMIT. Ignored if type is MARKET.
+      example: 45000.00
+    email:
+      type: string
+      description: Optional email address.
+      default: "guest@nexustrade.com"
+
+OrderResponse:
+  type: object
+  properties:
+    id:
+      type: string
+      format: uuid
+    userId:
+      type: string
+      format: uuid
+    symbol:
+      type: string
+    side:
+      $ref: './enums.yaml#/OrderSide'
+    type:
+      $ref: './enums.yaml#/OrderType'
+    status:
+      $ref: './enums.yaml#/OrderStatus'
+    quantity:
+      type: number
+      format: double
+    executedPrice:
+      type: number
+      format: double
+      description: The average price at which the order was filled.
+      nullable: true
+    createdAt:
+      type: string
+      format: date-time
+    updatedAt:
+      type: string
+      format: date-time
+
+OrderListResponse:
+  type: object
+  properties:
+    data:
+      type: array
+      items:
+        $ref: '#/OrderResponse'
+    page:
+      type: integer
+    totalItems:
+      type: integer
+
+# Specialized Error for Orders (e.g., specific logic failures)
+OrderErrorPayload:
+  $ref: '../responses/errors.yaml#/ErrorPayload'

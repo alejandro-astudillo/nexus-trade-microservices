@@ -1,0 +1,56 @@
+# General
+.DS_Store
+.vscode/
+.idea/
+*.log
+.agent/
+# Environment Variables
+.env
+.env.*
+!.env.example
+environments/.env.production
+environments/.env.staging
+environments/.env.development
+
+# Node.js
+node_modules/
+dist/
+build/
+coverage/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.venv/
+.env
+
+# Java
+target/
+*.class
+.gradle/
+build/
+
+# C# / .NET
+bin/
+obj/
+.vs/
+*.user
+*.suo
+
+# Go
+nexus-trade-pricing
+# Binaries
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Docker
+docker-compose.override.yml
+

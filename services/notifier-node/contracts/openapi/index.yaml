@@ -1,0 +1,43 @@
+# services/notifier-node/contracts/openapi/index.yaml
+openapi: 3.0.3
+info:
+  title: NexusTrade Notification Service
+  description: |
+    Service responsible for managing real-time user alerts and preferences.
+    Implemented in Node.js (NestJS). 
+    
+    NOTE: Real-time data is pushed via Socket.io at /socket.io/. 
+    This API controls the persistence and configuration layer.
+  version: 1.0.0
+  contact:
+    name: Frontend/BFF Team
+    email: frontend@nexustrade.com
+
+servers:
+  - url: http://localhost/api/stream/v1
+    description: Development Server (Via NGINX Gateway)
+  - url: https://api.nexustrade.com/v1
+    description: Production
+
+security:
+  - BearerAuth: []
+
+paths:
+  # Notification History
+  /notifications:
+    $ref: './paths/notifications.yaml#/list'
+  /notifications/{id}/read:
+    $ref: './paths/notifications.yaml#/markAsRead'
+  
+  # Price Alerts Configuration
+  /alerts:
+    $ref: './paths/alerts.yaml#/alerts'
+  /alerts/{id}:
+    $ref: './paths/alerts.yaml#/alertById'
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

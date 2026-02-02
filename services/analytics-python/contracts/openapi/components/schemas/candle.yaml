@@ -1,0 +1,45 @@
+Candle:
+  type: object
+  properties:
+    time:
+      type: integer
+      description: Unix timestamp (seconds)
+      example: 1678886400
+    open:
+      type: number
+      example: 24500.50
+    high:
+      type: number
+      example: 24600.00
+    low:
+      type: number
+      example: 24400.00
+    close:
+      type: number
+      example: 24550.20
+    volume:
+      type: number
+      example: 150.5
+
+MarketSummary:
+  type: object
+  properties:
+    topGainers:
+      type: array
+      items:
+        $ref: '#/TickerInfo'
+    topLosers:
+      type: array
+      items:
+        $ref: '#/TickerInfo'
+
+TickerInfo:
+  type: object
+  properties:
+    symbol:
+      type: string
+    changePercent:
+      type: number
+      example: 5.4
+    lastPrice:
+      type: number

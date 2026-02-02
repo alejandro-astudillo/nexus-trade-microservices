@@ -1,0 +1,39 @@
+openapi: 3.0.3
+info:
+  title: NexusTrade Analytics Service
+  description: |
+    Service responsible for serving historical market data (from MongoDB) and performing quantitative analysis.
+    Built with Python (FastAPI), Pandas, and Scikit-learn.
+  version: 1.0.0
+  contact:
+    name: Data Science Team
+    email: data@nexustrade.com
+
+servers:
+  - url: http://localhost/api/v1
+    description: Development Server (Via NGINX Gateway)
+  - url: https://api.nexustrade.com/v1
+    description: Production
+
+security:
+  - BearerAuth: []
+
+paths:
+  # Market Data (Read-only from MongoDB)
+  /market/history:
+    $ref: './paths/market.yaml#/history'
+  /market/summary:
+    $ref: './paths/market.yaml#/summary'
+
+  # Advanced Analytics (Computed on the fly)
+  /analytics/predict/{symbol}:
+    $ref: './paths/analysis.yaml#/predict'
+  /analytics/portfolio/risk:
+    $ref: './paths/analysis.yaml#/portfolioRisk'
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

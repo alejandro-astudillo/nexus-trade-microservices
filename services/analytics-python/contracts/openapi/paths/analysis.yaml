@@ -1,0 +1,43 @@
+predict:
+  get:
+    tags:
+      - Analytics
+    summary: AI Price Prediction
+    description: Uses a simple ML model (e.g., Linear Regression or ARIMA) to predict the next trend.
+    parameters:
+      - name: symbol
+        in: path
+        required: true
+        schema:
+          type: string
+    responses:
+      '200':
+        description: Prediction result.
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas/prediction.yaml#/PredictionResponse'
+      '500':
+        $ref: '../components/responses/errors.yaml#/InternalServerError'
+
+portfolioRisk:
+  post:
+    tags:
+      - Analytics
+    summary: Calculate Portfolio Metrics
+    description: Accepts a list of assets and calculates Volatility and Sharpe Ratio.
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/risk.yaml#/PortfolioRiskRequest'
+    responses:
+      '200':
+        description: Calculated metrics.
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas/risk.yaml#/PortfolioRiskResponse'
+      '422':
+        $ref: '../components/responses/errors.yaml#/UnprocessableEntity'

@@ -1,0 +1,20 @@
+PriceSnapshot:
+  type: object
+  properties:
+    symbol:
+      type: string
+      example: "BTC-USD"
+    price:
+      type: number
+      format: double
+      example: 45230.50
+    currency:
+      type: string
+      example: "USD"
+    source:
+      type: string
+      example: "BINANCE"
+    lastUpdated:
+      type: string
+      format: date-time
+      description: Timestamp of the last WebSocket packet received.

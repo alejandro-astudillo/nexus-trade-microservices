@@ -1,0 +1,29 @@
+# services/notifier-node/contracts/openapi/components/schemas/notification.yaml
+Notification:
+  type: object
+  properties:
+    id:
+      type: string
+      example: "64f1a2b3c4d5e6f7g8h9i0j1"
+    userId:
+      type: string
+      format: uuid
+    type:
+      type: string
+      enum: [ORDER_FILLED, PRICE_ALERT, SYSTEM_MSG]
+    title:
+      type: string
+      example: "Order Executed"
+    message:
+      type: string
+      example: "Your BUY order for BTC-USD was filled at $45,000."
+    isRead:
+      type: boolean
+      example: false
+    createdAt:
+      type: string
+      format: date-time
+    metadata:
+      type: object
+      description: JSON payload with extra details (e.g. orderId).
+      additionalProperties: true

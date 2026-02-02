@@ -1,0 +1,59 @@
+# services/wallet-java/docs/openapi/components/responses/errors.yaml
+
+# Schema base para el error (RFC 7807)
+ErrorPayload:
+  type: object
+  properties:
+    type:
+      type: string
+      format: uri
+      example: "https://nexustrade.com/probs/insufficient-funds"
+    title:
+      type: string
+      example: "Insufficient Funds"
+    status:
+      type: integer
+      example: 400
+    detail:
+      type: string
+      example: "El monto de la operación excede el saldo disponible."
+    instance:
+      type: string
+      format: uri
+      example: "/wallets/me/withdraw"
+    code:
+      type: string
+      description: "Código interno del catálogo de errores"
+      example: "WLT-001"
+
+# Respuestas Reutilizables
+BadRequest:
+  description: La petición tiene formato inválido o datos incorrectos.
+  content:
+    application/json:
+      schema:
+        $ref: '#/ErrorPayload'
+
+Unauthorized:
+  description: Token JWT inválido, expirado o ausente.
+  content:
+    application/json:
+      schema:
+        $ref: '#/ErrorPayload'
+        example:
+          title: "Unauthorized"
+          status: 401
+          code: "SEC-001"
+          detail: "Token expired or invalid signature"
+
+Conflict:
+  description: Conflicto de recursos (ej. Email duplicado).
+  content:
+    application/json:
+      schema:
+        $ref: '#/ErrorPayload'
+        example:
+          title: "Conflict"
+          status: 409
+          code: "USR-002"
+          detail: "User with this email already exists"

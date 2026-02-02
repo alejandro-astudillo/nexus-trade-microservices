@@ -1,0 +1,42 @@
+LoginRequest:
+  type: object
+  required:
+    - email
+    - password
+  properties:
+    email:
+      type: string
+      format: email
+      example: "trader@nexus.com"
+    password:
+      type: string
+      format: password
+      example: "SecurePass123!"
+
+RegisterRequest:
+  type: object
+  required:
+    - email
+    - password
+    - fullName
+  properties:
+    email:
+      type: string
+      format: email
+    password:
+      type: string
+      minLength: 8
+    fullName:
+      type: string
+      example: "John Doe"
+
+TokenResponse:
+  type: object
+  properties:
+    accessToken:
+      type: string
+    tokenType:
+      type: string
+      example: "Bearer"
+    expiresIn:
+      type: integer

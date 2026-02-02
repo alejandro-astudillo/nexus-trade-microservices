@@ -1,0 +1,15 @@
+# services/wallet-java/docs/openapi/paths/users.yaml
+me:
+  get:
+    tags:
+      - User
+    summary: Perfil del usuario actual
+    responses:
+      '200':
+        description: Datos del usuario.
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas/user.yaml#/UserProfile'
+      '401':
+        $ref: '../components/responses/errors.yaml#/Unauthorized'

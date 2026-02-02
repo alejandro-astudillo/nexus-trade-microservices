@@ -1,0 +1,227 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: nexus-postgres-staging
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - "${POSTGRES_PORT:-5433}:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - postgres_data_staging:/var/lib/postgresql/data
+      - ../docker/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  wallet-java:
+    image: ghcr.io/${GITHUB_REPOSITORY_OWNER:-alejandroastudillo}/nexus-trade-wallet:staging
+    build:
+      context: ../../services/wallet-java
+      target: prod
+    container_name: nexus-wallet-java-staging
+    restart: always
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      - SPRING_DATASOURCE_URL=${WALLET_DB_URL}
+      - SPRING_DATASOURCE_USERNAME=${WALLET_DB_USERNAME}
+      - SPRING_DATASOURCE_PASSWORD=${WALLET_DB_PASSWORD}
+      - SERVER_PORT=${WALLET_SERVER_PORT}
+      - SPRING_PROFILES_ACTIVE=prod
+    ports:
+      - "${WALLET_SERVER_PORT:-8082}:8081"
+
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    platform: linux/amd64
+    user: "0:0"
+    container_name: nexus-sqlserver-staging
+    restart: always
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=${SQLSERVER_PASSWORD}
+      - MSSQL_PID=Express
+    ports:
+      - "${SQLSERVER_PORT:-1434}:1433"
+    healthcheck:
+      test: ["CMD", "/opt/mssql-tools18/bin/sqlcmd", "-S", "localhost", "-U", "sa", "-P", "${SQLSERVER_PASSWORD}", "-C", "-Q", "SELECT 1"]
+      interval: 10s
+      timeout: 10s
+      retries: 20
+      start_period: 30s
+    volumes:
+      - sqlserver_data_staging:/var/opt/mssql
+
+  orders-csharp:
+    image: ghcr.io/${GITHUB_REPOSITORY_OWNER:-alejandroastudillo}/nexus-trade-orders:staging
+    build:
+      context: ../../services/order-engine-csharp
+      target: final
+    container_name: nexus-orders-csharp-staging
+    restart: always
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Staging
+      - ASPNETCORE_URLS=http://+:80
+      - ConnectionStrings__DefaultConnection=${ORDERS_DB_CONNECTION_STRING}
+    ports:
+      - "${ORDERS_SERVER_PORT:-5002}:80"
+
+  mongodb:
+    image: mongo:7.0
+    container_name: nexus-mongodb-staging
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD}
+      MONGO_INITDB_DATABASE: ${MONGO_DB}
+    ports:
+      - "${MONGO_PORT:-27018}:27017"
+    healthcheck:
+      test: ["CMD", "mongosh", "-u", "${MONGO_ROOT_USER}", "-p", "${MONGO_ROOT_PASSWORD}", "--authenticationDatabase", "admin", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - mongodb_data_staging:/data/db
+
+  analytics-python:
+    image: ghcr.io/${GITHUB_REPOSITORY_OWNER:-alejandroastudillo}/nexus-trade-analytics:staging
+    build:
+      context: ../../services/analytics-python
+      target: prod
+    container_name: nexus-analytics-python-staging
+    restart: always
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    environment:
+      - SERVER_PORT=${ANALYTICS_SERVER_PORT}
+      - MONGO_URL=${ANALYTICS_MONGO_URL}
+      - DB_NAME=${MONGO_DB}
+    ports:
+      - "${ANALYTICS_SERVER_PORT:-8004}:8003"
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: nexus-rabbitmq-staging
+    restart: always
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASS}
+    ports:
+      - "${RABBITMQ_PORT:-5673}:5672"
+      - "${RABBITMQ_MGMT_PORT:-15673}:15672"
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+    volumes:
+      - rabbitmq_data_staging:/var/lib/rabbitmq
+
+  notifier-node:
+    image: ghcr.io/${GITHUB_REPOSITORY_OWNER:-alejandroastudillo}/nexus-trade-notifier:staging
+    build:
+      context: ../../services/notifier-node
+      target: prod
+    container_name: nexus-notifier-node-staging
+    restart: always
+    depends_on:
+      mongodb:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    environment:
+      - PORT=${NOTIFIER_PORT}
+      - MONGO_URL=${NOTIFIER_MONGO_URL}
+      - RABBITMQ_USER=${RABBITMQ_USER}
+      - RABBITMQ_PASS=${RABBITMQ_PASS}
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_PORT=5672
+    ports:
+      - "${NOTIFIER_PORT:-8085}:8084"
+
+  pricing-go:
+    image: ghcr.io/${GITHUB_REPOSITORY_OWNER:-alejandroastudillo}/nexus-trade-pricing:staging
+    build:
+      context: ../../services/pricing-go
+      # No target needed for distroless final stage
+    container_name: nexus-pricing-go-staging
+    restart: always
+    environment:
+      - SERVER_PORT=${PRICING_PORT}
+      - REDIS_ADDR=redis:6379
+      - RABBITMQ_URL=amqp://${RABBITMQ_USER}:${RABBITMQ_PASS}@rabbitmq:5672
+    ports:
+      - "${PRICING_PORT:-8083}:8080"
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  redis:
+    image: redis:alpine
+    container_name: nexus-redis-staging
+    restart: always
+    ports:
+      - "6380:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - redis_data_staging:/data
+
+  gateway:
+    image: nginx:alpine
+    container_name: nexus-trade-staging
+    restart: always
+    ports:
+      - "8080:80"
+    volumes:
+      - ../docker/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - pricing-go
+      - wallet-java
+      - orders-csharp
+      - analytics-python
+      - notifier-node
+      - web
+
+  web:
+    image: ghcr.io/${GITHUB_REPOSITORY_OWNER:-alejandroastudillo}/nexus-trade-web:staging
+    build:
+      context: ../../web
+      target: prod
+    container_name: nexus-web-staging
+    restart: always
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:8080
+    ports:
+      - "${WEB_PORT:-3001}:3000"
+    depends_on:
+      - wallet-java
+      - orders-csharp
+      - analytics-python
+      - notifier-node
+      - pricing-go
+
+volumes:
+  postgres_data_staging:
+  sqlserver_data_staging:
+  mongodb_data_staging:
+  rabbitmq_data_staging:
+  redis_data_staging:

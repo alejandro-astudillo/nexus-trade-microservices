@@ -1,0 +1,33 @@
+# services/order-engine-csharp/docs/openapi/index.yaml
+openapi: 3.0.3
+info:
+  title: NexusTrade Order Engine
+  description: |
+    High-performance Transactional Service responsible for order validation, execution, and lifecycle management.
+    Implemented in C# (.NET Core) using CQRS patterns.
+  version: 1.0.0
+  contact:
+    name: Architecture Team
+    email: arch@nexustrade.com
+
+servers:
+  - url: http://localhost/api/orders/v1
+    description: Development Server (Via NGINX Gateway)
+  - url: https://api.nexustrade.com/v1
+    description: Production (Via NGINX Gateway)
+
+security:
+  - BearerAuth: []
+
+paths:
+  /orders:
+    $ref: './paths/orders.yaml#/orders'
+  /orders/{orderId}:
+    $ref: './paths/orders.yaml#/orderById'
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

@@ -1,0 +1,19 @@
+PredictionResponse:
+  type: object
+  properties:
+    symbol:
+      type: string
+      example: "BTC-USD"
+    predictedPrice:
+      type: number
+      description: Projected price for the next interval.
+    trend:
+      type: string
+      enum: ["BULLISH", "BEARISH", "NEUTRAL"]
+    confidenceScore:
+      type: number
+      description: 0 to 1 scale indicating model confidence.
+      example: 0.85
+    modelUsed:
+      type: string
+      example: "LinearRegression_v1"

@@ -1,0 +1,40 @@
+# services/notifier-node/contracts/openapi/components/responses/errors.yaml
+ErrorPayload:
+  type: object
+  properties:
+    title:
+      type: string
+    status:
+      type: integer
+    detail:
+      type: string
+    code:
+      type: string
+
+BadRequest:
+  description: Invalid request parameters or body.
+  content:
+    application/json:
+      schema:
+        $ref: '#/ErrorPayload'
+
+Unauthorized:
+  description: Authentication required or invalid token.
+  content:
+    application/json:
+      schema:
+        $ref: '#/ErrorPayload'
+
+NotFound:
+  description: The requested resource was not found.
+  content:
+    application/json:
+      schema:
+        $ref: '#/ErrorPayload'
+
+InternalServerError:
+  description: An unexpected error occurred on the server.
+  content:
+    application/json:
+      schema:
+        $ref: '#/ErrorPayload'

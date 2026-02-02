@@ -1,0 +1,18 @@
+WalletDetail:
+  type: object
+  properties:
+    id:
+      type: string
+      format: uuid
+    currency:
+      type: string
+      example: "USD"
+      enum: ["USD", "EUR"]
+    balance:
+      type: number
+      format: double
+      description: "Saldo disponible. Se mapea a BigDecimal en backend."
+      example: 10500.50
+    updatedAt:
+      type: string
+      format: date-time

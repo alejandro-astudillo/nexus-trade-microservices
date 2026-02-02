@@ -1,0 +1,37 @@
+listPrices:
+  get:
+    tags:
+      - Market Data
+    summary: Get All Current Prices
+    description: Returns a snapshot of the latest price for all tracked assets from the in-memory cache.
+    responses:
+      '200':
+        description: List of prices.
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '../components/schemas/price.yaml#/PriceSnapshot'
+
+getPrice:
+  get:
+    tags:
+      - Market Data
+    summary: Get Specific Asset Price
+    parameters:
+      - name: symbol
+        in: path
+        required: true
+        schema:
+          type: string
+          example: "BTC-USD"
+    responses:
+      '200':
+        description: Current price details.
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas/price.yaml#/PriceSnapshot'
+      '404':
+        $ref: '../components/responses/errors.yaml#/NotFound'

@@ -1,0 +1,23 @@
+manageAssets:
+  post:
+    tags:
+      - Administration
+    summary: Track New Asset
+    description: Instructs the Ingestor to open a new WebSocket connection for this symbol.
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/config.yaml#/AssetConfig'
+    responses:
+      '201':
+        description: Asset added to tracking loop.
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas/config.yaml#/AssetConfig'
+      '409':
+        $ref: '../components/responses/errors.yaml#/Conflict'
+
+

@@ -1,0 +1,54 @@
+# services/notifier-node/contracts/openapi/paths/notifications.yaml
+list:
+  get:
+    tags:
+      - Notifications
+    summary: Get Notification History
+    description: Retrieves past notifications (e.g., filled orders, price alerts) stored in MongoDB.
+    parameters:
+      - name: userId
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: unreadOnly
+        in: query
+        schema:
+          type: boolean
+          default: false
+    responses:
+      '200':
+        description: List of notifications.
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '../components/schemas/notification.yaml#/Notification'
+      '401':
+        $ref: '../components/responses/errors.yaml#/Unauthorized'
+
+markAsRead:
+  patch:
+    tags:
+      - Notifications
+    summary: Mark Notification as Read
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    responses:
+      '200':
+        description: Status updated.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success: 
+                  type: boolean
+                  example: true
+      '404':
+        $ref: '../components/responses/errors.yaml#/NotFound'

@@ -1,0 +1,46 @@
+Transaction:
+  type: object
+  properties:
+    id:
+      type: string
+      format: uuid
+    type:
+      type: string
+      enum: [DEPOSIT, WITHDRAWAL, BUY, SELL]
+    amount:
+      type: number
+      example: 100.00
+    status:
+      type: string
+      enum: [PENDING, COMPLETED, FAILED]
+    referenceId:
+      type: string
+      description: "ID de la orden (si es BUY/SELL) o referencia externa"
+    createdAt:
+      type: string
+      format: date-time
+
+DepositRequest:
+  type: object
+  required:
+    - amount
+  properties:
+    amount:
+      type: number
+      minimum: 1.0
+      maximum: 1000000.0
+      example: 5000.00
+    
+InternalTransactionRequest:
+  type: object
+  required:
+    - email
+    - amount
+  properties:
+    email:
+      type: string
+      format: email
+    amount:
+      type: number
+      minimum: 0.01
+      example: 100.00

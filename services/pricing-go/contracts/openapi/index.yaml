@@ -1,0 +1,43 @@
+openapi: 3.0.3
+info:
+  title: NexusTrade Pricing Service
+  description: |
+    High-performance Market Data Ingestor.
+    Responsibilities:
+    1. Connects to External WebSockets (Binance, Finnhub).
+    2. Broadcasts normalized data to Redis & RabbitMQ.
+    3. Provides REST API for current price snapshots and configuration.
+    
+    Implemented in Go (Golang) using Echo Framework.
+  version: 1.0.0
+  contact:
+    name: Core Engineering
+    email: core@nexustrade.com
+
+servers:
+  - url: http://localhost/api/prices/v1
+    description: Development Server (Via NGINX Gateway)
+  - url: https://api.nexustrade.com/v1
+    description: Production
+
+security:
+  - BearerAuth: []
+
+paths:
+  # Public Data (Snapshots)
+  /prices:
+    $ref: './paths/prices.yaml#/listPrices'
+  /prices/{symbol}:
+    $ref: './paths/prices.yaml#/getPrice'
+
+  # Admin / Configuration (Internal)
+  # Admin / Configuration (Internal)
+  /manageAssets:
+    $ref: './paths/admin.yaml#/manageAssets'
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

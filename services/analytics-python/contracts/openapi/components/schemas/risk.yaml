@@ -1,0 +1,33 @@
+PortfolioRiskRequest:
+  type: object
+  properties:
+    assets:
+      type: array
+      items:
+        type: object
+        properties:
+          symbol:
+            type: string
+          quantity:
+            type: number
+  example:
+    assets:
+      - symbol: "BTC-USD"
+        quantity: 0.5
+      - symbol: "ETH-USD"
+        quantity: 10.0
+
+PortfolioRiskResponse:
+  type: object
+  properties:
+    totalValue:
+      type: number
+    volatility:
+      type: number
+      description: Standard deviation of returns.
+    sharpeRatio:
+      type: number
+      description: Risk-adjusted return metric.
+    diversificationScore:
+      type: integer
+      description: 1-100 score.

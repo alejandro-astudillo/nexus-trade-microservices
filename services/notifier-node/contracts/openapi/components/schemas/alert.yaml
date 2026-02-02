@@ -1,0 +1,34 @@
+# services/notifier-node/contracts/openapi/components/schemas/alert.yaml
+PriceAlert:
+  type: object
+  properties:
+    id:
+      type: string
+    symbol:
+      type: string
+      example: "BTC-USD"
+    targetPrice:
+      type: number
+      example: 50000.00
+    condition:
+      type: string
+      enum: [ABOVE, BELOW]
+      example: "ABOVE"
+    isActive:
+      type: boolean
+      default: true
+
+CreateAlertRequest:
+  type: object
+  required:
+    - symbol
+    - targetPrice
+    - condition
+  properties:
+    symbol:
+      type: string
+    targetPrice:
+      type: number
+    condition:
+      type: string
+      enum: [ABOVE, BELOW]

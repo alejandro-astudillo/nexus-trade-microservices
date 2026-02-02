@@ -1,0 +1,49 @@
+history:
+  get:
+    tags:
+      - Market Data
+    summary: Get Historical Candles (OHLCV)
+    description: Retrieves historical price data for charting libraries (e.g., Lightweight Charts).
+    parameters:
+      - name: symbol
+        in: query
+        required: true
+        schema:
+          type: string
+          example: "BTC-USD"
+      - name: resolution
+        in: query
+        schema:
+          type: string
+          enum: ["1m", "5m", "1h", "1d"]
+          default: "1h"
+      - name: limit
+        in: query
+        schema:
+          type: integer
+          default: 100
+    responses:
+      '200':
+        description: Array of candles.
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '../components/schemas/candle.yaml#/Candle'
+      '404':
+        $ref: '../components/responses/errors.yaml#/NotFound'
+
+summary:
+  get:
+    tags:
+      - Market Data
+    summary: 24h Market Summary
+    description: Returns top gainers, losers, and volume leaders.
+    responses:
+      '200':
+        description: Market snapshot.
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas/candle.yaml#/MarketSummary'

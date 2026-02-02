@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/NexusTrade.Orders.Api/NexusTrade.Orders.Api.csproj" />
+    <Project Path="src/NexusTrade.Orders.Application/NexusTrade.Orders.Application.csproj" />
+    <Project Path="src/NexusTrade.Orders.Domain/NexusTrade.Orders.Domain.csproj" />
+    <Project Path="src/NexusTrade.Orders.Infrastructure/NexusTrade.Orders.Infrastructure.csproj" />
+  </Folder>
+</Solution>
