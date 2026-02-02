@@ -217,7 +217,7 @@ jobs:
 
   deploy:
     needs: [filter, build-wallet, build-orders, build-analytics, build-notifier, build-pricing, build-web]
-    if: always() && !cancelled() && !failed()
+    if: always() && !contains(needs.*.result, 'failure') && !contains(needs.*.result, 'cancelled')
     runs-on: self-hosted
     steps:
       - name: Checkout repository
