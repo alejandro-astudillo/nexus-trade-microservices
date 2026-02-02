@@ -35,6 +35,7 @@ jobs:
         with:
           context: services/wallet-java
           target: prod
+          platforms: linux/amd64,linux/arm64
           push: true
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-wallet:staging
           cache-from: type=gha
@@ -46,6 +47,7 @@ jobs:
         with:
           context: services/order-engine-csharp
           target: final
+          platforms: linux/amd64,linux/arm64
           push: true
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-orders:staging
           cache-from: type=gha
@@ -57,6 +59,7 @@ jobs:
         with:
           context: services/analytics-python
           target: prod
+          platforms: linux/amd64,linux/arm64
           push: true
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-analytics:staging
           cache-from: type=gha
@@ -68,6 +71,7 @@ jobs:
         with:
           context: services/notifier-node
           target: prod
+          platforms: linux/amd64,linux/arm64
           push: true
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-notifier:staging
           cache-from: type=gha
@@ -78,6 +82,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: services/pricing-go
+          platforms: linux/amd64,linux/arm64
           push: true
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-pricing:staging
           cache-from: type=gha
@@ -89,6 +94,7 @@ jobs:
         with:
           context: web
           target: prod
+          platforms: linux/amd64,linux/arm64
           push: true
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-web:staging
           cache-from: type=gha
