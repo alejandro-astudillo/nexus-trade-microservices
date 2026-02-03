@@ -168,18 +168,20 @@ jobs:
     needs: [build-wallet, build-orders, build-analytics, build-notifier, build-pricing, build-web]
     runs-on: [self-hosted, production]
     steps:
-      # Fix for Windows PowerShell Expand-Archive bug with .env files
-      - name: Clean workspace
+      # Use git directly instead of actions/checkout to avoid Windows PowerShell Expand-Archive bug
+      - name: Clean and checkout repository
         shell: cmd
         run: |
-          if exist "%GITHUB_WORKSPACE%\*" (
-            del /f /s /q "%GITHUB_WORKSPACE%\*" >nul 2>&1
-            for /d %%d in ("%GITHUB_WORKSPACE%\*") do rmdir /s /q "%%d" >nul 2>&1
+          cd /d "%GITHUB_WORKSPACE%"
+          if exist ".git" (
+            git fetch origin
+            git reset --hard origin/${{ github.ref_name }}
+            git clean -fdx
+          ) else (
+            cd /d "%GITHUB_WORKSPACE%\.."
+            rmdir /s /q "%GITHUB_WORKSPACE%" 2>nul
+            git clone --depth 1 --branch ${{ github.ref_name }} https://github.com/${{ github.repository }}.git "%GITHUB_WORKSPACE%"
           )
-          exit /b 0
-
-      - name: Checkout repository
-        uses: actions/checkout@v4
         
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
