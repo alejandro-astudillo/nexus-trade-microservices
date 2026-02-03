@@ -196,12 +196,13 @@ jobs:
           echo "${{ secrets.ENV_PRODUCTION }}" > environments/.env.production
 
       - name: Deploy to Production
+        shell: cmd
         run: |
           # Set the GITHUB_REPOSITORY_OWNER env var for docker-compose substitution
-          export GITHUB_REPOSITORY_OWNER=${{ github.repository_owner }}
+          set "GITHUB_REPOSITORY_OWNER=${{ github.repository_owner }}"
           
           # Pull latest images
           docker compose -p nexus-trade-prod -f infrastructure/compose/docker-compose.prod.yml --env-file environments/.env.production pull
           
-          # Deploy
-          make prod-up
+          # Deploy using docker compose directly (avoid make dependency on Windows)
+          docker compose -p nexus-trade-prod -f infrastructure/compose/docker-compose.prod.yml --env-file environments/.env.production up -d
