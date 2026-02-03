@@ -3,6 +3,12 @@ name: Production Deployment
 on:
   push:
     branches: [ "main" ]
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+      - '.gitignore'
+      - 'LICENSE'
+      - 'Makefile'
 
 env:
   REGISTRY: ghcr.io
