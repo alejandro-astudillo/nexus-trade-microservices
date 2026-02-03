@@ -195,7 +195,7 @@ jobs:
         shell: cmd
         run: |
           if not exist environments mkdir environments
-          echo ${{ secrets.ENV_PRODUCTION }} > environments\.env.production
+          powershell -ExecutionPolicy Bypass -Command "[System.IO.File]::WriteAllText('environments\.env.production', '${{ secrets.ENV_PRODUCTION }}'.Replace(\"'\",\"\"))"
 
       - name: Deploy to Production
         shell: cmd
