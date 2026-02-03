@@ -15,6 +15,7 @@ jobs:
       - name: Checkout repository
         shell: cmd
         run: |
+          "C:\Program Files\Git\cmd\git.exe" config --global core.longpaths true
           cd /d "%GITHUB_WORKSPACE%"
           if exist ".git" (
             "C:\Program Files\Git\cmd\git.exe" fetch origin
