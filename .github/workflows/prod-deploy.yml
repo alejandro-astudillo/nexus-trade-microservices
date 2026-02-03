@@ -174,13 +174,13 @@ jobs:
         run: |
           cd /d "%GITHUB_WORKSPACE%"
           if exist ".git" (
-            git fetch origin
-            git reset --hard origin/${{ github.ref_name }}
-            git clean -fdx
+            "C:\Program Files\Git\cmd\git.exe" fetch origin
+            "C:\Program Files\Git\cmd\git.exe" reset --hard origin/${{ github.ref_name }}
+            "C:\Program Files\Git\cmd\git.exe" clean -fdx
           ) else (
             cd /d "%GITHUB_WORKSPACE%\.."
             rmdir /s /q "%GITHUB_WORKSPACE%" 2>nul
-            git clone --depth 1 --branch ${{ github.ref_name }} https://github.com/${{ github.repository }}.git "%GITHUB_WORKSPACE%"
+            "C:\Program Files\Git\cmd\git.exe" clone --depth 1 --branch ${{ github.ref_name }} https://github.com/${{ github.repository }}.git "%GITHUB_WORKSPACE%"
           )
         
       - name: Login to GitHub Container Registry
