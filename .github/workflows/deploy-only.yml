@@ -11,21 +11,8 @@ jobs:
   deploy:
     runs-on: [self-hosted, production]
     steps:
-      # Use git with absolute path to avoid PATH issues
       - name: Checkout repository
-        shell: cmd
-        run: |
-          "C:\Program Files\Git\cmd\git.exe" config --global core.longpaths true
-          cd /d "%GITHUB_WORKSPACE%"
-          if exist ".git" (
-            "C:\Program Files\Git\cmd\git.exe" fetch origin
-            "C:\Program Files\Git\cmd\git.exe" reset --hard origin/${{ github.ref_name }}
-            "C:\Program Files\Git\cmd\git.exe" clean -fdx
-          ) else (
-            cd /d "%GITHUB_WORKSPACE%\.."
-            rmdir /s /q "%GITHUB_WORKSPACE%" 2>nul
-            "C:\Program Files\Git\cmd\git.exe" clone --depth 1 --branch ${{ github.ref_name }} https://github.com/${{ github.repository }}.git "%GITHUB_WORKSPACE%"
-          )
+        uses: actions/checkout@v4
         
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
@@ -35,14 +22,16 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
           
       - name: Create Production Environment File
-        shell: cmd
         run: |
-          if not exist environments mkdir environments
-          powershell -ExecutionPolicy Bypass -Command "[System.IO.File]::WriteAllText('environments\.env.production', '${{ secrets.ENV_PRODUCTION }}'.Replace(\"'\",\"\"))"
+          mkdir -p environments
+          echo "${{ secrets.ENV_PRODUCTION }}" > environments/.env.production
 
       - name: Deploy to Production
-        shell: cmd
         run: |
-          set "GITHUB_REPOSITORY_OWNER=${{ github.repository_owner }}"
+          export GITHUB_REPOSITORY_OWNER=${{ github.repository_owner }}
+          
+          # Pull latest images
           docker compose -p nexus-trade-prod -f infrastructure/compose/docker-compose.prod.yml --env-file environments/.env.production pull
-          docker compose -p nexus-trade-prod -f infrastructure/compose/docker-compose.prod.yml --env-file environments/.env.production up -d
+          
+          # Deploy
+          make prod-up
