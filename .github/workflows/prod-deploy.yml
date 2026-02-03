@@ -192,9 +192,10 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
           
       - name: Create Production Environment File
+        shell: cmd
         run: |
-          mkdir -p environments
-          echo "${{ secrets.ENV_PRODUCTION }}" > environments/.env.production
+          if not exist environments mkdir environments
+          echo ${{ secrets.ENV_PRODUCTION }} > environments\.env.production
 
       - name: Deploy to Production
         shell: cmd
