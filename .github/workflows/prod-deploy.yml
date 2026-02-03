@@ -104,6 +104,14 @@ jobs:
     needs: build-and-push
     runs-on: [self-hosted, production]
     steps:
+      # Fix for Windows PowerShell 5.1 Expand-Archive bug with .env files
+      - name: Clean workspace
+        shell: pwsh
+        run: |
+          if (Test-Path $env:GITHUB_WORKSPACE) {
+            Get-ChildItem -Path $env:GITHUB_WORKSPACE -Force | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
+          }
+
       - name: Checkout repository
         uses: actions/checkout@v4
         
