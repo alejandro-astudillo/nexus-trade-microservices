@@ -168,13 +168,15 @@ jobs:
     needs: [build-wallet, build-orders, build-analytics, build-notifier, build-pricing, build-web]
     runs-on: [self-hosted, production]
     steps:
-      # Fix for Windows PowerShell 5.1 Expand-Archive bug with .env files
+      # Fix for Windows PowerShell Expand-Archive bug with .env files
       - name: Clean workspace
-        shell: powershell
+        shell: cmd
         run: |
-          if (Test-Path $env:GITHUB_WORKSPACE) {
-            Get-ChildItem -Path $env:GITHUB_WORKSPACE -Force | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
-          }
+          if exist "%GITHUB_WORKSPACE%\*" (
+            del /f /s /q "%GITHUB_WORKSPACE%\*" >nul 2>&1
+            for /d %%d in ("%GITHUB_WORKSPACE%\*") do rmdir /s /q "%%d" >nul 2>&1
+          )
+          exit /b 0
 
       - name: Checkout repository
         uses: actions/checkout@v4
