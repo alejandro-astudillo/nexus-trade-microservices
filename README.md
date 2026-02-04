@@ -21,7 +21,7 @@ The platform is fully deployed and ready for review. You can access the live das
 
 ### 📸 System Visualization
 
-![System Architecture](assets/system-architecture.png)
+![System Architecture](assets/system-architecture-v2.png)
 *(High-level overview of the microservices, message brokers, and persistence layers)*
 
 ---
