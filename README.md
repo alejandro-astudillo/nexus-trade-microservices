@@ -12,7 +12,7 @@ Nexus Trade is an enterprise-grade ecosystem of microservices designed to simula
 
 The platform is fully deployed and ready for review. You can access the live dashboard and explore the system's capabilities without local setup.
 
-**🌐 [VIEW LIVE DEMO HERE](https://your-deployment-link.com)**
+**🌐 [VIEW LIVE DEMO HERE](hhttps://nexus.alejandroastudillo.dev/)**
 
 > **👋 For Recruiters & Technical Reviewers:**
 > You don't need to register! On the login screen, simply click the **"🚀 Try Demo Account"** button. This will instantly grant you access to a pre-funded portfolio with **$100,000 USD** in simulated funds to test real-time trading and analytics.
