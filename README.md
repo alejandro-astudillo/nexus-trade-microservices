@@ -70,5 +70,5 @@ You can explore the interface contracts for each microservice:
 
 Created by **Alejandro Astudillo** as a professional portfolio project to demonstrate proficiency in **System Design, Microservices, and Cloud-Native Development**.
 
-*   **LinkedIn:** [My LinkeDin](https://www.linkedin.com/in/alejandro-astudillo-584a071b5/)
+*   **LinkedIn:** [My LinkedIn](https://www.linkedin.com/in/alejandro-astudillo-584a071b5/)
 *   **Portfolio:** [My Portfolio](https://alejandroastudillo.dev/)
