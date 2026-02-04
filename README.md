@@ -12,7 +12,7 @@ Nexus Trade is an enterprise-grade ecosystem of microservices designed to simula
 
 The platform is fully deployed and ready for review. You can access the live dashboard and explore the system's capabilities without local setup.
 
-**🌐 [VIEW LIVE DEMO HERE](https://nexus.alejandroastudillo.dev/)**
+**🌐 [NEXUS TRADE APP](https://nexus.alejandroastudillo.dev/)**
 
 > **👋 For Recruiters & Technical Reviewers:**
 > You don't need to register! On the login screen, simply click the **"🚀 Try Demo Account"** button. This will instantly grant you access to a pre-funded portfolio with **$100,000 USD** in simulated funds to test real-time trading and analytics.
@@ -37,7 +37,7 @@ This platform is built as a distributed system where each service is implemented
 | **Wallet Core** | **Java (Spring Boot)** | Hexagonal Architecture & Ledger |
 | **Analytics** | **Python (FastAPI)** | ML Risk Prediction & Data Science |
 | **Notifier** | **Node.js (NestJS)** | Event-Driven WebSocket Gateway |
-| **Frontend** | **Next.js ** | Server Components & Real-time UI |
+| **Frontend** | **Next.js** | Server Components & Real-time UI |
 
 ---
 
@@ -65,11 +65,10 @@ You can explore the interface contracts for each microservice:
 *   **Order Service:** Managed in C#, handles the logic of market/limit orders.
 *   **Pricing Service:** Managed in Go, handles external API connections.
 
----
 
 ### 📝 Author & Purpose
 
 Created by **Alejandro Astudillo** as a professional portfolio project to demonstrate proficiency in **System Design, Microservices, and Cloud-Native Development**.
 
-*   **LinkedIn:** [Tu Link]
-*   **Portfolio:** [Tu Web]
+*   **LinkedIn:** [My LinkeDin](https://www.linkedin.com/in/alejandro-astudillo-584a071b5/)
+*   **Portfolio:** [My Portfolio](https://alejandroastudillo.dev/)
