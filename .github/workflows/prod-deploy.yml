@@ -166,7 +166,7 @@ jobs:
 
   deploy:
     needs: [build-wallet, build-orders, build-analytics, build-notifier, build-pricing, build-web]
-    runs-on: [self-hosted, production]
+    runs-on: self-hosted
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
