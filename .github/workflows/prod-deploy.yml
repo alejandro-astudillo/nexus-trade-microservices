@@ -191,7 +191,7 @@ jobs:
           docker compose -p nexus-trade-prod -f infrastructure/compose/docker-compose.prod.yml --env-file environments/.env.production pull
           
           # Deploy
-          make prod-up
+          docker compose -p nexus-trade-prod -f infrastructure/compose/docker-compose.prod.yml --env-file environments/.env.production up -d
 
           # Fix iptables for outgoing container traffic (Required for VPS)
           export PROD_SUBNET=$(docker network inspect nexus-trade-prod_default --format '{{range .IPAM.Config}}{{.Subnet}}{{end}}' 2>/dev/null || echo "")
