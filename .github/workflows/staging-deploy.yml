@@ -247,4 +247,4 @@ jobs:
         run: |
           export GITHUB_REPOSITORY_OWNER=${{ github.repository_owner }}
           docker compose -p nexus-trade-staging -f infrastructure/compose/docker-compose.staging.yml --env-file environments/.env.staging pull
-          make staging-up
+          docker compose -p nexus-trade-staging -f infrastructure/compose/docker-compose.staging.yml --env-file environments/.env.staging up -d
