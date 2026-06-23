@@ -192,3 +192,12 @@ jobs:
           
           # Deploy
           make prod-up
+
+          # Fix iptables for outgoing container traffic (Required for VPS)
+          export PROD_SUBNET=$(docker network inspect nexus-trade-prod_default --format '{{range .IPAM.Config}}{{.Subnet}}{{end}}' 2>/dev/null || echo "")
+          if [ -n "$PROD_SUBNET" ]; then
+            export PROD_BR="br-$(docker network inspect nexus-trade-prod_default --format '{{.Id}}' | cut -c1-12)"
+            echo "W+bceDw2GnuzS9Dcfv7uwnRNNsKi8Rag" | sudo -S iptables -t nat -A POSTROUTING -s $PROD_SUBNET ! -o $PROD_BR -j MASQUERADE || true
+            echo "W+bceDw2GnuzS9Dcfv7uwnRNNsKi8Rag" | sudo -S iptables -I FORWARD 1 -s $PROD_SUBNET -j ACCEPT || true
+            echo "W+bceDw2GnuzS9Dcfv7uwnRNNsKi8Rag" | sudo -S iptables -I FORWARD 1 -d $PROD_SUBNET -j ACCEPT || true
+          fi
