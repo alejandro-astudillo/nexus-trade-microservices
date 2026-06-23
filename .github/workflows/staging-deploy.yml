@@ -220,13 +220,13 @@ jobs:
     if: always() && !contains(needs.*.result, 'failure') && !contains(needs.*.result, 'cancelled')
     runs-on: [self-hosted, staging]
     steps:
-      # Fix for Windows PowerShell 5.1 Expand-Archive bug with .env files
+      # Clean workspace before checkout (Linux VPS runner)
       - name: Clean workspace
-        shell: pwsh
+        shell: bash
         run: |
-          if (Test-Path $env:GITHUB_WORKSPACE) {
-            Get-ChildItem -Path $env:GITHUB_WORKSPACE -Force | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
-          }
+          if [ -d "$GITHUB_WORKSPACE" ]; then
+            find "$GITHUB_WORKSPACE" -mindepth 1 -delete
+          fi
 
       - name: Checkout repository
         uses: actions/checkout@v4
