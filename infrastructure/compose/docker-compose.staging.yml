@@ -226,7 +226,7 @@ services:
     container_name: nexus-web-staging
     restart: always
     environment:
-      - NEXT_PUBLIC_API_URL=http://localhost:8100
+      - NEXT_PUBLIC_API_URL=https://test.alejandroastudillo.dev
     ports:
       - "${WEB_PORT:-3100}:3000"
     depends_on:
