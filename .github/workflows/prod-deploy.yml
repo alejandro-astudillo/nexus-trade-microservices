@@ -2,7 +2,7 @@ name: Production Deployment
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "dev" ]
 
 env:
   REGISTRY: ghcr.io
@@ -186,10 +186,13 @@ jobs:
       - name: Deploy to Production
         run: |
           export GITHUB_REPOSITORY_OWNER=${{ github.repository_owner }}
-          
+
+          # Read the host sudo password from the env file (provided via ENV_PRODUCTION secret)
+          SUDO_PASSWORD=$(grep -E '^SUDO_PASSWORD=' environments/.env.production | cut -d= -f2-)
+
           # Pull latest images
           docker compose -p nexus-trade-prod -f infrastructure/compose/docker-compose.prod.yml --env-file environments/.env.production pull
-          
+
           # Deploy
           docker compose -p nexus-trade-prod -f infrastructure/compose/docker-compose.prod.yml --env-file environments/.env.production up -d
 
@@ -197,7 +200,7 @@ jobs:
           export PROD_SUBNET=$(docker network inspect nexus-trade-prod_default --format '{{range .IPAM.Config}}{{.Subnet}}{{end}}' 2>/dev/null || echo "")
           if [ -n "$PROD_SUBNET" ]; then
             export PROD_BR="br-$(docker network inspect nexus-trade-prod_default --format '{{.Id}}' | cut -c1-12)"
-            echo "W+bceDw2GnuzS9Dcfv7uwnRNNsKi8Rag" | sudo -S iptables -t nat -A POSTROUTING -s $PROD_SUBNET ! -o $PROD_BR -j MASQUERADE || true
-            echo "W+bceDw2GnuzS9Dcfv7uwnRNNsKi8Rag" | sudo -S iptables -I FORWARD 1 -s $PROD_SUBNET -j ACCEPT || true
-            echo "W+bceDw2GnuzS9Dcfv7uwnRNNsKi8Rag" | sudo -S iptables -I FORWARD 1 -d $PROD_SUBNET -j ACCEPT || true
+            echo "$SUDO_PASSWORD" | sudo -S iptables -t nat -A POSTROUTING -s $PROD_SUBNET ! -o $PROD_BR -j MASQUERADE || true
+            echo "$SUDO_PASSWORD" | sudo -S iptables -I FORWARD 1 -s $PROD_SUBNET -j ACCEPT || true
+            echo "$SUDO_PASSWORD" | sudo -S iptables -I FORWARD 1 -d $PROD_SUBNET -j ACCEPT || true
           fi

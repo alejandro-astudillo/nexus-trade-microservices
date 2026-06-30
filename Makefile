@@ -39,23 +39,3 @@ prod-rebuild:
 
 prod-ps:
 	$(COMPOSE_PROD) ps
-
-COMPOSE_STAGING=docker compose -p nexus-trade-staging -f infrastructure/compose/docker-compose.staging.yml --env-file environments/.env.staging
-
-# Staging commands
-.PHONY: staging-up staging-down staging-logs staging-rebuild staging-ps
-
-staging-up:
-	$(COMPOSE_STAGING) up -d
-
-staging-down:
-	$(COMPOSE_STAGING) down
-
-staging-logs:
-	$(COMPOSE_STAGING) logs -f
-
-staging-rebuild:
-	$(COMPOSE_STAGING) up -d --build
-
-staging-ps:
-	$(COMPOSE_STAGING) ps

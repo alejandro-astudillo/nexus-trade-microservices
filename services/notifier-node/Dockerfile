@@ -22,7 +22,7 @@ RUN npm run build
 # Prune development dependencies to keep the image small
 RUN npm ci --omit=dev && npm cache clean --force
 
-# 5. Production Stage (Target for staging/prod)
+# 5. Production Stage (Target for prod)
 FROM base AS prod
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/dist ./dist

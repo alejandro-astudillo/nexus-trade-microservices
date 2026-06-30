@@ -9,7 +9,6 @@
 .env.*
 !.env.example
 environments/.env.production
-environments/.env.staging
 environments/.env.development
 
 # Node.js
